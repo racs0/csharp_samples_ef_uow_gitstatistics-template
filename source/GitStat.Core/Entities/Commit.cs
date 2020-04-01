@@ -20,5 +20,20 @@ namespace GitStat.Core.Entities
         public int Insertions { get; set; }
         public int Deletions { get; set; }
 
+        public Commit()
+        {
+
+        }
+
+        public Commit(Developer developer, DateTime date, string hashCode, string message, int filesChanges, int insertions, int deletions)
+        {
+            Developer = developer;
+            Date = date;
+            HashCode = hashCode;
+            Message = message;
+            FilesChanges = filesChanges;
+            Insertions = insertions;
+            Deletions = deletions;
+        }
     }
 }

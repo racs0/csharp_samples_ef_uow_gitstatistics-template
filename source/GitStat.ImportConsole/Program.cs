@@ -41,10 +41,50 @@ namespace GitStat.ImportConsole
             Console.WriteLine("=================");
             using (IUnitOfWork unitOfWork = new UnitOfWork())
             {
+                var commits = unitOfWork.CommitRepository.GetAllCommits();
+                var commitsWithSums = commits
+                    .GroupBy(d => d.Developer.Name)
+                    .Select(g => new
+                    {
+                        Name = g.Key,
+                        Commit = g.Select(c => c.Developer.Commits).Count(),
+                        FilesChanges = g.Sum(fc => fc.FilesChanges),
+                        Insertions = g.Sum(i => i.Insertions),
+                        Deletions = g.Sum(d => d.Deletions)
+                    }).OrderByDescending(o => o.Commit).ToList();
+
+                Console.WriteLine("");
+                Console.WriteLine("Statistik der Commits der Developer");
+                Console.WriteLine("-----------------------------------");
+
+                foreach (var item in commitsWithSums)
+                {
+                    Console.WriteLine("Developer: {0} | Commits: {1} | FileChanges: {2} | Insertions: {3} | Deletions: {4}",item.Name,item.Commit,item.FilesChanges,item.Insertions,item.Deletions);
+                }
+
+
+                Console.WriteLine("");
+                Console.WriteLine("Commit mit Id 4");
+                Console.WriteLine("-----------------------------------");
+                var commitByID = unitOfWork.CommitRepository.GetCommitById(4);
+
+                Console.WriteLine("Developer: {0} | Date: {1} | FileChanges: {2} | Insertions: {3} | Deletions: {4}",commitByID.Developer.Name, commitByID.Date, commitByID.FilesChanges,commitByID.Insertions,commitByID.Deletions);
+
+                Console.WriteLine("");
+                Console.WriteLine("Commits der letzten 4 Wochen");
+                Console.WriteLine("-----------------------------------");
+                DateTime help = commits.OrderBy(s => s.Date).Last().Date.AddDays(-28);
+                var lastCommits = commits.Where(c => c.Date >= help).OrderBy(s => s.Date);
+
+                foreach (var item in lastCommits)
+                {
+                    Console.WriteLine("Developer: {0} | Date: {1} | FileChanges: {2} | Insertions: {3} | Deletions: {4}", item.Developer.Name, item.Date, item.FilesChanges, item.Insertions, item.Deletions);
+                }
             }
             Console.Write("Beenden mit Eingabetaste ...");
             Console.ReadLine();
         }
+
 
     }
 }

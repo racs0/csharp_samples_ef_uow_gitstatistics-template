@@ -12,5 +12,14 @@ namespace GitStat.Core.Entities
         public string Name { get; set; }
         public ICollection<Commit> Commits { get; set; }
 
+        public Developer()
+        {
+
+        }
+
+        public Developer(string name)
+        {
+            Name = name;
+        }
     }
 }

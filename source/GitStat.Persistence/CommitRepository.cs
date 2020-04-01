@@ -21,5 +21,14 @@ namespace GitStat.Persistence
             _dbContext.Commits.AddRange(commits);
         }
 
+        public IEnumerable<Commit> GetAllCommits()
+        {
+            return _dbContext.Commits.Include(d => d.Developer).ToList();
+        }
+
+        public Commit GetCommitById(int id)
+        {
+            return _dbContext.Commits.Find(id);
+        }
     }
 }
